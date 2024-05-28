@@ -38,12 +38,12 @@ final class OrderVisitorItemExtensionSpec extends ObjectBehavior
         Expr $expr,
     ): void {
         $queryNameGenerator->generateParameterName('state')->shouldBeCalled()->willReturn('state');
-        $queryBuilder->getRootAliases()->willReturn(['o']);
+        $queryBuilder->getRootAliases()->willReturn('o');
 
         $userContext->getUser()->willReturn(null);
 
         $queryBuilder
-            ->leftJoin(sprintf('%s.customer', 'o'), 'customer')
+            ->leftJoin('o.customer', 'customer')
             ->shouldBeCalled()
             ->willReturn($queryBuilder)
         ;
@@ -60,32 +60,41 @@ final class OrderVisitorItemExtensionSpec extends ObjectBehavior
             ->willReturn($expr)
         ;
 
-        $queryBuilder
-            ->setParameter('createdByGuest', true)
+        $expr
+            ->isNull('user')
             ->shouldBeCalled()
-            ->willReturn($expr)
+            ->willReturn('user IS NULL')
         ;
 
         $expr
-            ->andX('o.customer IS NOT NULL', 'o.createdByGuest = :createdByGuest')
+            ->eq('o.createdByGuest', ':createdByGuest')
             ->shouldBeCalled()
-            ->willReturn('o.customer IS NOT NULL AND o.createdByGuest = :createdByGuest')
+            ->willReturn('o.createdByGuest = :createdByGuest')
         ;
 
         $expr
-            ->orX('user IS NULL', 'o.customer IS NULL', 'o.customer IS NOT NULL AND o.createdByGuest = :createdByGuest')
+            ->andX(
+                'user IS NULL',
+                'o.createdByGuest = :createdByGuest'
+            )
             ->shouldBeCalled()
-            ->willReturn('user IS NULL OR o.customer IS NULL OR (o.customer IS NOT NULL AND o.createdByGuest = :createdByGuest)')
+            ->willReturn('user IS NULL AND o.createdByGuest = :createdByGuest')
         ;
 
         $queryBuilder
-            ->andWhere('user IS NULL OR o.customer IS NULL OR (o.customer IS NOT NULL AND o.createdByGuest = :createdByGuest)')
+            ->andWhere('user IS NULL AND o.createdByGuest = :createdByGuest')
             ->shouldBeCalled()
             ->willReturn($queryBuilder)
         ;
 
         $queryBuilder
-            ->andWhere(sprintf('%s.state = :state', 'o'))
+            ->setParameter('createdByGuest', true)
+            ->shouldBeCalled()
+            ->willReturn($queryBuilder)
+        ;
+
+        $queryBuilder
+            ->andWhere('o.state = :state')
             ->shouldBeCalled()
             ->willReturn($queryBuilder)
         ;
@@ -139,12 +148,12 @@ final class OrderVisitorItemExtensionSpec extends ObjectBehavior
         QueryNameGeneratorInterface $queryNameGenerator,
         Expr $expr,
     ): void {
-        $queryBuilder->getRootAliases()->willReturn(['o']);
+        $queryBuilder->getRootAliases()->willReturn('o');
 
         $userContext->getUser()->willReturn(null);
 
         $queryBuilder
-            ->leftJoin(sprintf('%s.customer', 'o'), 'customer')
+            ->leftJoin('o.customer', 'customer')
             ->shouldBeCalled()
             ->willReturn($queryBuilder)
         ;
@@ -161,26 +170,35 @@ final class OrderVisitorItemExtensionSpec extends ObjectBehavior
             ->willReturn($expr)
         ;
 
+        $expr
+            ->isNull('user')
+            ->shouldBeCalled()
+            ->willReturn('user IS NULL')
+        ;
+
+        $expr
+            ->eq('o.createdByGuest', ':createdByGuest')
+            ->shouldBeCalled()
+            ->willReturn('o.createdByGuest = :createdByGuest')
+        ;
+
+        $expr
+            ->andX(
+                'user IS NULL',
+                'o.createdByGuest = :createdByGuest'
+            )
+            ->shouldBeCalled()
+            ->willReturn('user IS NULL AND o.createdByGuest = :createdByGuest')
+        ;
+
+        $queryBuilder
+            ->andWhere('user IS NULL AND o.createdByGuest = :createdByGuest')
+            ->shouldBeCalled()
+            ->willReturn($queryBuilder)
+        ;
+
         $queryBuilder
             ->setParameter('createdByGuest', true)
-            ->shouldBeCalled()
-            ->willReturn($expr)
-        ;
-
-        $expr
-            ->andX('o.customer IS NOT NULL', 'o.createdByGuest = :createdByGuest')
-            ->shouldBeCalled()
-            ->willReturn('o.customer IS NOT NULL AND o.createdByGuest = :createdByGuest')
-        ;
-
-        $expr
-            ->orX('user IS NULL', 'o.customer IS NULL', 'o.customer IS NOT NULL AND o.createdByGuest = :createdByGuest')
-            ->shouldBeCalled()
-            ->willReturn('user IS NULL OR o.customer IS NULL OR (o.customer IS NOT NULL AND o.createdByGuest = :createdByGuest)')
-        ;
-
-        $queryBuilder
-            ->andWhere('user IS NULL OR o.customer IS NULL OR (o.customer IS NOT NULL AND o.createdByGuest = :createdByGuest)')
             ->shouldBeCalled()
             ->willReturn($queryBuilder)
         ;

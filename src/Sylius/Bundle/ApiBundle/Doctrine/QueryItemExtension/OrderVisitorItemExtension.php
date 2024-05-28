@@ -51,14 +51,12 @@ final class OrderVisitorItemExtension implements QueryItemExtensionInterface
         $queryBuilder
             ->leftJoin(sprintf('%s.customer', $rootAlias), 'customer')
             ->leftJoin('customer.user', 'user')
-            ->andWhere($queryBuilder->expr()->orX(
-                'user IS NULL',
-                sprintf('%s.customer IS NULL', $rootAlias),
+            ->andWhere(
                 $queryBuilder->expr()->andX(
-                    sprintf('%s.customer IS NOT NULL', $rootAlias),
-                    sprintf('%s.createdByGuest = :createdByGuest', $rootAlias),
+                    $queryBuilder->expr()->isNull('user'),
+                    $queryBuilder->expr()->eq(sprintf('%s.createdByGuest', $rootAlias), ':createdByGuest')
                 ),
-            ))->setParameter('createdByGuest', true)
+            )->setParameter('createdByGuest', true)
         ;
 
         $httpRequestMethodType = $context[ContextKeys::HTTP_REQUEST_METHOD_TYPE];

@@ -319,34 +319,7 @@ final class CartTest extends JsonApiTestCase
         $tokenValue = $this->pickUpCart();
         $this->addItemToCart('MUG_BLUE', 3, $tokenValue);
 
-        $this->client->request(
-            method: 'PUT',
-            uri: sprintf('/api/v2/shop/orders/%s', $tokenValue),
-            server: self::CONTENT_TYPE_HEADER,
-            content: json_encode([
-                'email' => 'oliver@doe.com',
-                'billingAddress' => [
-                    'firstName' => 'Updated: Jane',
-                    'lastName' => 'Updated: Doe',
-                    'phoneNumber' => '123456789',
-                    'countryCode' => 'US',
-                    'provinceCode' => 'US-MI',
-                    'city' => 'Updated: Nebraska',
-                    'street' => 'Updated: Top secret',
-                    'postcode' => '10001',
-                ],
-                'shippingAddress' => [
-                    'firstName' => 'Updated: Jane',
-                    'lastName' => 'Updated: Doe',
-                    'phoneNumber' => '123456789',
-                    'countryCode' => 'US',
-                    'provinceCode' => 'US-MI',
-                    'city' => 'Updated: Nebraska',
-                    'street' => 'Updated: Top secret',
-                    'postcode' => '121212',
-                ],
-            ], \JSON_THROW_ON_ERROR),
-        );
+        $this->addressCart($tokenValue, 'oliver@doe.com');
 
         $this->assertResponse(
             $this->client->getResponse(),
@@ -520,5 +493,59 @@ final class CartTest extends JsonApiTestCase
         $this->requestDelete(sprintf('/api/v2/shop/orders/%s', $tokenValue));
 
         $this->assertResponseCode($this->client->getResponse(), Response::HTTP_NO_CONTENT);
+    }
+
+    /** @test */
+    public function it_returns_nothing_if_visitor_tries_to_get_the_cart_of_logged_in_user(): void
+    {
+        $this->loadFixturesFromFiles([
+            'channel.yaml',
+            'cart.yaml',
+            'country.yaml',
+            'shipping_method.yaml',
+            'payment_method.yaml',
+            'authentication/customer.yaml'
+        ]);
+
+        $tokenValue = $this->pickUpCart();
+        $this->addItemToCart('MUG_BLUE', 3, $tokenValue);
+
+        $this->addressCart($tokenValue, 'oliver@doe.com');
+
+        $this->requestGet(sprintf('/api/v2/shop/orders/%s', $tokenValue));
+
+        $this->assertResponseCode($this->client->getResponse(), Response::HTTP_NOT_FOUND);
+    }
+
+    private function addressCart(string $tokenValue, string $email): void
+    {
+        $this->client->request(
+            method: 'PUT',
+            uri: sprintf('/api/v2/shop/orders/%s', $tokenValue),
+            server: self::CONTENT_TYPE_HEADER,
+            content: json_encode([
+                'email' => $email,
+                'billingAddress' => [
+                    'firstName' => 'Updated: Jane',
+                    'lastName' => 'Updated: Doe',
+                    'phoneNumber' => '123456789',
+                    'countryCode' => 'US',
+                    'provinceCode' => 'US-MI',
+                    'city' => 'Updated: Nebraska',
+                    'street' => 'Updated: Top secret',
+                    'postcode' => '10001',
+                ],
+                'shippingAddress' => [
+                    'firstName' => 'Updated: Jane',
+                    'lastName' => 'Updated: Doe',
+                    'phoneNumber' => '123456789',
+                    'countryCode' => 'US',
+                    'provinceCode' => 'US-MI',
+                    'city' => 'Updated: Nebraska',
+                    'street' => 'Updated: Top secret',
+                    'postcode' => '121212',
+                ],
+            ], \JSON_THROW_ON_ERROR),
+        );
     }
 }

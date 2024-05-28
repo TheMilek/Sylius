@@ -1,0 +1,3 @@
+{% if hookable_metadata.context.form.vars.data.isSimple == false %}
+    {% hook 'configurable_product' %}
+{% endif %}

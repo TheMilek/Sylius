@@ -244,7 +244,7 @@ final class OrdersTest extends JsonApiTestCase
     public function it_does_not_allow_to_get_payment_configuration_for_invalid_payment(): void
     {
         $this->setUpDefaultGetHeaders();
-        $fixtures = $this->loadFixturesFromFiles([
+        $this->loadFixturesFromFiles([
             'channel.yaml',
             'cart.yaml',
             'country.yaml',
@@ -265,7 +265,7 @@ final class OrdersTest extends JsonApiTestCase
     public function it_does_not_allow_delete_completed_order(): void
     {
         $this->setUpDefaultGetHeaders();
-        $fixtures = $this->loadFixturesFromFiles([
+        $this->loadFixturesFromFiles([
             'channel.yaml',
             'cart.yaml',
             'country.yaml',
@@ -280,6 +280,30 @@ final class OrdersTest extends JsonApiTestCase
         $this->requestDelete(
             uri: sprintf('/api/v2/shop/orders/%s', $tokenValue),
             headers: $this->headerBuilder()->withShopUserAuthorization('oliver@doe.com')->build(),
+        );
+
+        $this->assertResponseCode($this->client->getResponse(), Response::HTTP_NOT_FOUND);
+    }
+
+    /** @test */
+    public function it_returns_nothing_if_visitor_tries_to_get_the_order_of_logged_in_user(): void
+    {
+        $this->setUpDefaultGetHeaders();
+        $this->loadFixturesFromFiles([
+            'channel.yaml',
+            'cart.yaml',
+            'country.yaml',
+            'customer.yaml',
+            'shipping_method.yaml',
+            'payment_method.yaml',
+        ]);
+
+        $tokenValue = 'nAWw2jewpA';
+        $this->placeOrder($tokenValue, 'oliver@doe.com');
+
+        $this->requestGet(
+            uri: sprintf('/api/v2/shop/orders/%s', $tokenValue),
+            headers: $this->headerBuilder()->build(),
         );
 
         $this->assertResponseCode($this->client->getResponse(), Response::HTTP_NOT_FOUND);
