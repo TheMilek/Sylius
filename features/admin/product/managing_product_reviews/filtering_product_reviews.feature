@@ -25,7 +25,7 @@ Feature: Filtering product reviews
         Then I should see a single product review in the list
         And I should see the product review "Great book" in the list
 
-    @ui @mink:chromedriver @todo-api
+    @ui @javascript @todo-api
     Scenario: Filtering tracked product variants by product
         When I filter by "PHP Book" product
         Then I should see a single product review in the list

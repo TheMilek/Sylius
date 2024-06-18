@@ -15,7 +15,7 @@ Feature: Filtering inventory by product
         And I am logged in as an administrator
         And I am browsing inventory
 
-    @ui @mink:chromedriver @no-api
+    @ui @javascript @no-api
     Scenario: Filtering tracked product variants by product
         When I filter tracked variants by "RHCP T-Shirt" product
         Then I should see only one tracked variant in the list

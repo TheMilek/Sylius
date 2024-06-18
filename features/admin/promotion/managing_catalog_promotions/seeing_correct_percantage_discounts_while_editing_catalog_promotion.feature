@@ -17,7 +17,7 @@ Feature: Seeing correct percentage discounts while editing catalog promotion
         And it is enabled
         And I am logged in as an administrator
 
-    @api @ui @mink:chromedriver
+    @api @ui @javascript
     Scenario: Seeing the accurate percentage amount after editing the catalog promotion including the value up to one decimal place
         When I want to modify a catalog promotion "Christmas sale"
         And I edit its action so that it reduces price by "2.5%"
@@ -25,7 +25,7 @@ Feature: Seeing correct percentage discounts while editing catalog promotion
         Then I should be notified that it has been successfully edited
         And this catalog promotion should have "2.50%" percentage discount
 
-    @api @ui @mink:chromedriver
+    @api @ui @javascript
     Scenario: Seeing the accurate percentage amount after editing the catalog promotion including the value up to two decimal places
         When I want to modify a catalog promotion "Christmas sale"
         And I edit its action so that it reduces price by "2.56%"

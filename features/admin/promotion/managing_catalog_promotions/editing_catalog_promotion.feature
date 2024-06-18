@@ -48,7 +48,7 @@ Feature: Editing catalog promotion
         When I want to modify a catalog promotion "Christmas sale"
         Then I should not be able to edit its code
 
-    @api @ui @mink:chromedriver
+    @api @ui @javascript
     Scenario: Editing catalog promotion variant scope
         When I want to modify a catalog promotion "Christmas sale"
         And I remove "PHP T-Shirt" variant from its scope
@@ -58,7 +58,7 @@ Feature: Editing catalog promotion
         And this catalog promotion should be applied on "Kotlin T-Shirt" variant
         And this catalog promotion should not be applied on "PHP T-Shirt" variant
 
-    @api @ui @mink:chromedriver
+    @api @ui @javascript
     Scenario: Editing catalog promotion taxon scope
         When I want to modify a catalog promotion "Christmas sale"
         And I remove its last scope
@@ -69,7 +69,7 @@ Feature: Editing catalog promotion
         And this catalog promotion should not be applied on "Kotlin T-Shirt" variant
         And this catalog promotion should not be applied on "PHP T-Shirt" variant
 
-    @api @ui @mink:chromedriver
+    @api @ui @javascript
     Scenario: Editing catalog promotion product scope
         When I want to modify a catalog promotion "Christmas sale"
         And I remove its last scope
@@ -87,7 +87,7 @@ Feature: Editing catalog promotion
         Then I should be notified that it has been successfully edited
         And this catalog promotion should have "40.00%" percentage discount
 
-    @api @ui @mink:chromedriver
+    @api @ui @javascript
     Scenario: Editing catalog promotion action to be a fixed discount
         When I want to modify a catalog promotion "Christmas sale"
         When I remove its last action
@@ -111,7 +111,7 @@ Feature: Editing catalog promotion
         And I save my changes
         Then I should get information that the end date cannot be set before start date
 
-    @api @ui @mink:chromedriver
+    @api @ui @javascript
     Scenario: Receiving error message after not filling price for all channels
         Given the store operates on another channel named "Poland"
         When I want to modify a catalog promotion "Christmas sale"
@@ -128,7 +128,7 @@ Feature: Editing catalog promotion
         And I save my changes
         Then I should be notified that the percentage amount should be a number and cannot be empty
 
-    @api @ui @mink:chromedriver
+    @api @ui @javascript
     Scenario: Editing catalog promotion action to be a percentage discount and not filling amount
         Given there is a catalog promotion "Winter sale" that reduces price by fixed "$10.00" in the "United States" channel and applies on "T-Shirt" product
         When I want to modify a catalog promotion "Christmas sale"
@@ -136,7 +136,7 @@ Feature: Editing catalog promotion
         And I save my changes
         Then I should be notified that the percentage amount should be a number and cannot be empty
 
-    @api @ui @mink:chromedriver
+    @api @ui @javascript
     Scenario: Editing catalog promotion action to be a fixed discount and not filling amount
         Given there is a catalog promotion "Winter sale" that reduces price by fixed "$10.00" in the "United States" channel and applies on "T-Shirt" product
         When I want to modify a catalog promotion "Winter sale"
